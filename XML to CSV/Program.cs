@@ -12,8 +12,6 @@ namespace XML_to_CSV
         {
             Converter c = new Converter();
             c.readFile();
-            //c.displayXMLfile();
-            //Console.WriteLine(c.extractOutput());
             c.fileCreate();
         }
     }

@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace XML_to_CSV
 {
     class Converter
     {
-        private String fileName { get; set; }
         private String filePath { get; set; }
         private XmlDocument doc = new XmlDocument();
         private String attributes = "";
-
         public Converter(){
 
         }
@@ -24,23 +18,12 @@ namespace XML_to_CSV
         {
             Console.WriteLine("Please input file path:");
             filePath = Console.ReadLine();
-            fileName = filePath.Substring(filePath.LastIndexOf('\\')+1);
             try
             {
                 doc.Load(filePath);
             }
-            catch (System.Exception) { }
-            
-            
-        }
-
-        //Display all nodes. Used just to test if file was read as it should.
-        public void displayXMLfile()
-        {
-            foreach (XmlNode node in doc.DocumentElement.ChildNodes)
-            {
-                string text = node.InnerText;
-                Console.WriteLine(text);
+            catch (System.Exception) {
+                Environment.Exit(0);
             }
         }
 
@@ -68,6 +51,8 @@ namespace XML_to_CSV
                                 attributes = attributes + (reader.GetAttribute(0) + ',');
                                 
                             }
+
+                            //reading numbers from element that have selected atribute.
                             if(reader.GetAttribute(0).ToString().Equals("Subtotal")
                         || reader.GetAttribute(0).ToString().Equals("Shipping") || reader.GetAttribute(0).ToString().Equals("Tax")
                         || reader.GetAttribute(0).ToString().Equals("Payment Amount"))
@@ -77,7 +62,7 @@ namespace XML_to_CSV
                         }
                                                
                         break;
-                    //case XmlNodeType.Text: //Display the text in each element.
+                    //case XmlNodeType.Text: //Display the text in each element. might be needed for later
                         //reading the value
                      //   break;
                     //case XmlNodeType.EndElement: //Display the end of the element.
@@ -93,9 +78,11 @@ namespace XML_to_CSV
         public void fileCreate()
         {
             String newFileDestination = filePath.Replace(".xml", ".csv");
-            StreamWriter file = new StreamWriter(newFileDestination);
-            file.WriteLine(extractOutput());
-            file.Close();
+
+            using (StreamWriter file = new StreamWriter(newFileDestination))
+            {
+                file.WriteLine(extractOutput());
+            }
         }
 
     }
