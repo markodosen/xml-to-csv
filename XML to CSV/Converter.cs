@@ -29,7 +29,8 @@ namespace XML_to_CSV
             {
                 doc.Load(filePath);
             }
-            catch (System.IO.FileNotFoundException) { }
+            catch (System.Exception) { }
+            
             
         }
 
@@ -59,16 +60,25 @@ namespace XML_to_CSV
                         }
                         if (reader.AttributeCount > 0)
                         {
-                            
-                            if (!attributes.Contains(reader.GetAttribute(0)))  //adding attributes to the string. Attributes will be added only if they are not already put in
+                            //adding attributes to the string. Attributes will be added only if they are not already put in
+                            if ((reader.GetAttribute(0).ToString().Equals("Subtotal")
+                        || reader.GetAttribute(0).ToString().Equals("Shipping") || reader.GetAttribute(0).ToString().Equals("Tax")
+                        || reader.GetAttribute(0).ToString().Equals("Payment Amount"))  && !attributes.Contains(reader.GetAttribute(0)))  
                             {
-                                attributes = attributes + (reader.GetAttribute(0) + ',');  
+                                attributes = attributes + (reader.GetAttribute(0) + ',');
+                                
+                            }
+                            if(reader.GetAttribute(0).ToString().Equals("Subtotal")
+                        || reader.GetAttribute(0).ToString().Equals("Shipping") || reader.GetAttribute(0).ToString().Equals("Tax")
+                        || reader.GetAttribute(0).ToString().Equals("Payment Amount"))
+                            {
+                                output = output + reader.ReadElementContentAsDouble() + ',';
                             }
                         }
                                                
                         break;
                     case XmlNodeType.Text: //Display the text in each element.
-                        output = output + reader.Value + ','; //reading the value
+                        //reading the value
                         break;
                     case XmlNodeType.EndElement: //Display the end of the element.
                         break;
