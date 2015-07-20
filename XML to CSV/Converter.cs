@@ -32,15 +32,19 @@ namespace XML_to_CSV
         {
             String output =""; //string that will be used to save values
             XmlTextReader reader = new XmlTextReader(filePath);
+            int i = 1;
             while (reader.Read())
             {
-                switch (reader.NodeType)
-                {
-                    case XmlNodeType.Element: // The node is an element.
-                        if (reader.Name.Equals("row")) //when we get to new row, add \n so we can separate individual rows
+               // switch (reader.NodeType)
+              //  {
+                  //  case XmlNodeType.Element: // The node is an element.
+
+                if (i == 1 && reader.Name.Equals("row")) //when we get to new row, add \n so we can separate individual rows
                         {
                             output = output + '\n';
+                            i = 0;
                         }
+                        else {if(reader.Name.Equals("row")) i++; }
                         if (reader.AttributeCount > 0)
                         {
                             //adding attributes to the string. Attributes will be added only if they are not already put in
@@ -60,14 +64,15 @@ namespace XML_to_CSV
                                 output = output + reader.ReadElementContentAsDouble() + ',';
                             }
                         }
+                
                                                
-                        break;
+                      //  break;
                     //case XmlNodeType.Text: //Display the text in each element. might be needed for later
                         //reading the value
                      //   break;
                     //case XmlNodeType.EndElement: //Display the end of the element.
                    //     break;
-                }
+                //}
 
             }
             reader.Close();
