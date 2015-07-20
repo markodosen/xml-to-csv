@@ -77,11 +77,11 @@ namespace XML_to_CSV
                         }
                                                
                         break;
-                    case XmlNodeType.Text: //Display the text in each element.
+                    //case XmlNodeType.Text: //Display the text in each element.
                         //reading the value
-                        break;
-                    case XmlNodeType.EndElement: //Display the end of the element.
-                        break;
+                     //   break;
+                    //case XmlNodeType.EndElement: //Display the end of the element.
+                   //     break;
                 }
 
             }
