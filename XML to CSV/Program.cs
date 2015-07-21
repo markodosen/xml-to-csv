@@ -11,7 +11,7 @@ namespace XML_to_CSV
         static void Main(String[] arg)
         {
              
-            LinkedList<String> list = new LinkedList<string>();
+            LinkedList<String> list = new LinkedList<String>();
             list.AddFirst("Subtotal");
             list.AddLast("Shipping");
             list.AddLast("Tax");

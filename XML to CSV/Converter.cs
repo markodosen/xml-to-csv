@@ -9,11 +9,14 @@ namespace XML_to_CSV
     class Converter
     {
 
-        
-        private String filePath { get; set; } //path from where file is loaded
-        private XmlDocument doc = new XmlDocument(); //file that will be loaded if path is correct
-        private String header=""; //header of new csv file
-        private LinkedList<String> searchedAttributes; //list of all attributes that user is searching for
+        //path from where file is loaded
+        private String filePath { get; set; }
+        //file that will be loaded if path is correct
+        private XmlDocument doc = new XmlDocument(); 
+        //header of new csv file
+        private String header="";
+        //list of all attributes that user is searching for
+        private LinkedList<String> searchedAttributes; 
         
 
         /// <summary>
@@ -52,12 +55,14 @@ namespace XML_to_CSV
             int i = 1;
             while (reader.Read())
             {
-                if (i == 1 && reader.Name.Equals("row")) //when we get to new row, add \n so we can separate individual rows
+                //when we get to new row, add \n so we can separate individual rows
+                if (i == 1 && reader.Name.Equals("row")) 
                         {
                             output.Append("\n");
                             i = 0;
                         }
-                else {if(reader.Name.Equals("row")) i++; }
+                else if(reader.Name.Equals("row")) i++; 
+
                 //reading from element that has attributes
                 if (reader.AttributeCount > 0)
                         {
