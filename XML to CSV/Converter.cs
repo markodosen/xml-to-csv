@@ -11,86 +11,91 @@ namespace XML_to_CSV
 
         //path from where file is loaded
         public String filePath { get; set; }
+
         //file that will be loaded if path is correct
         private XmlDocument doc = new XmlDocument(); 
+
         //header of new csv file
         private String header="";
+
         //list of all attributes that user is searching for
-        private LinkedList<String> searchedAttributes; 
+        private List<String> searchedAttributes;
+
+        //dictionary that will contain required attributes and value of elements
+        Dictionary<String, String> values = new Dictionary<string, string>();
+
+        //string that will be used to save values
+        StringBuilder output = new StringBuilder(); 
         
 
         /// <summary>
         /// Constructor for converter that require list of attributes that you want to search for
         /// </summary>
         /// <param name="searchedAttributes">contains list of attributes that you want to search for from xml file</param>
-        public Converter(LinkedList<String> searchedAttributes)
+        public Converter(List<String> searchedAttributes)
         {
             this.searchedAttributes = searchedAttributes;
         }
 
         /// <summary>
-        /// Read file, currently just check if file does exist and given file path is valid.
+        ///Check if file from filePath exists
         /// </summary>
-        public void readFile()
+        public void checkFile()
         {
-            //Console.WriteLine("Please input file path:");
-           // filePath = Console.ReadLine();
-            try
+            if (!File.Exists(filePath))
             {
-                doc.Load(filePath);
-            }
-            catch{
                 Console.WriteLine("XML File not found, press any button to exit!");
                 Console.ReadKey();
                 Environment.Exit(0);
-            }
+            }          
         }
 
         /// <summary>
-        /// Extract data from file using filePath and create output string to be printed in new file
+        /// Extract data from xml file and save them in dictionary. Save only data that is passed by list of searched attributes 
+        /// and displays them in same order that they were sent.
         /// </summary>
-        /// <returns>returns output string that contains only elements that are searched</returns>
-        public String extractOutput()
+        /// <returns>returns string that consists of header(attirbutes) and all data</returns>
+        public String newOutput()
         {
-            StringBuilder output = new StringBuilder(); //string that will be used to save values
-            using (XmlTextReader reader = new XmlTextReader(filePath)) { 
-            int i = 1;
-            while (reader.Read())
+            //set keys to match attributes that will be used for header
+            foreach (String s in searchedAttributes)
             {
-                //when we get to new row, add \n so we can separate individual rows
-                if (i == 1 && reader.Name.Equals("row")) 
-                        {
-                            output.Append("\n");
-                            i = 0;
-                        }
-                else if(reader.Name.Equals("row")) i++; 
+                values.Add(s, "");
+            }
 
-                //reading from element that has attributes
-                if (reader.AttributeCount > 0)
+            //set header for document
+            setHeader();
+
+            //read xml file
+            using (XmlTextReader reader = new XmlTextReader(filePath))
+            {
+                while (reader.Read())
+                {
+                    //when end of row is reached fill output stream with values and reset values for next row.
+                    if (reader.NodeType == XmlNodeType.EndElement && reader.Name.Equals("row"))
+                    {
+                        getAllValues();
+                        output.Append("\n");
+                        cleanValues(values);
+                    }
+                    {
+                        if (reader.AttributeCount > 0)
                         {
-                            //taking atribute name and continue working if it is not null
-                            String atName = reader.GetAttribute("name").ToString(); 
-                            if (atName != null) { 
-                            //checking if attribute is required for the file and imputing it once for the header.
-                                if (searchedAttributes.Contains(atName) && !header.Contains(atName))  
+                            //read attribute name and if that attribute is searched for csv file, add it to dictionary
+                            String atName = reader.GetAttribute("name").ToString();
+                            if (atName != null)
+                            {
+                                if (values.ContainsKey(atName))
                                 {
-                                  header = header + (reader.GetAttribute("name") + ','); //Not using string builder because i need contains function
-                                
+                                    values[atName] = cleanString(reader.ReadElementContentAsString());
                                 }
-
-                            //reading attribute and "cleaning it" for output string.
-                             if(searchedAttributes.Contains(atName))
-                             {
-                                String forOutput = cleanString(reader.ReadElementContentAsString()); //cleaning string so it would fit csv format
-                                output.Append(forOutput + ","); 
-                             }
-
                             }
                         }
+                    }
+                }
             }
-            }
-            return (header + output);
-            
+            //return complete string that contains all data ready to be put in csv
+            return (header + "\n" + output);
         }
 
         /// <summary>
@@ -102,7 +107,7 @@ namespace XML_to_CSV
 
             using (StreamWriter file = new StreamWriter(newFileDestination))
             {
-                file.WriteLine(extractOutput());
+                file.WriteLine(newOutput());
             }
         }
        
@@ -113,11 +118,45 @@ namespace XML_to_CSV
         /// <returns>return is that same string but cleaned</returns>
         public String cleanString(String str)
         {
-            str = str.Replace(',','\0');
+            if (str.Contains(",") || str.Contains("\""))
+            {
+                str = "\"" + str + "\"";                    
+            }
             str = str.Replace('"', '\0');
-            str = str.Replace('\n', '\0');
-            str = str.Replace('\\', '\0');
+            str = str.Replace("\n", "\\n");
             return str;
         }
+
+        /// <summary>
+        /// reset all values of dictionary, but keep keys
+        /// </summary>
+        /// <param name="d"> d is dictionary that we want to clean values</param>
+        public void cleanValues(Dictionary<String,String> d){
+            List<String> keys = new List<string>(d.Keys);
+            foreach (var key in keys)
+            {
+                d[key] = "";
+            }
+        }
+
+        //create header of csv file from dictionary keys
+        public void setHeader()
+        {
+            foreach (var s in values.Keys)
+            {
+                header = header + s + ",";
+            }
+        }
+
+        //takes all values from dictionary and add them to output string.
+        public void getAllValues()
+        {
+            foreach (String s in values.Values)
+            {
+                output.Append(s + ",");
+            }
+        }
     }
+
+    
 }

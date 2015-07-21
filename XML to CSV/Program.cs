@@ -11,11 +11,13 @@ namespace XML_to_CSV
         static void Main(String[] arg)
         {
             //list of attributes that we need to display
-            LinkedList<String> list = new LinkedList<String>();
-            list.AddFirst("Subtotal");
-            list.AddLast("Shipping");
-            list.AddLast("Tax");
-            list.AddLast("Payment Amount");
+            List<String> list = new List<String>();
+            list.Add("Payment Amount");
+            list.Add("Subtotal");
+            list.Add("Shipping");            
+            list.Add("Tax");
+            list.Add("Address3");
+            
 
             //if user doesn't put file path as argument, ask him to put it.
             Converter c = new Converter(list);
@@ -27,8 +29,8 @@ namespace XML_to_CSV
             else { 
                 c.filePath = arg[0];
             }
-            //readFile to check if it is ok
-            c.readFile();
+            //check file if it exists
+            c.checkFile();
 
             //create scv file from file that was red
             c.fileCreate();
