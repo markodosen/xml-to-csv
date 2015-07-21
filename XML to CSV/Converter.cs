@@ -1,88 +1,121 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
+using System.Text;
 
 namespace XML_to_CSV
 {
     class Converter
     {
-        private String fileName { get; set; }
+
+        
         private String filePath { get; set; }
         private XmlDocument doc = new XmlDocument();
+<<<<<<< HEAD
         private String attributes = "";
 
         //read file from file path that is inserted through console. Also saves file name.
+=======
+        private String header="";
+        private LinkedList<String> searchedAttributes;
+        
+
+        /// <summary>
+        /// Constructor for converter that require list of attributes that you want to search for
+        /// </summary>
+        /// <param name="searchedAttributes">contains list of attributes that you want to search for from xml file</param>
+        public Converter(LinkedList<String> searchedAttributes)
+        {
+            this.searchedAttributes = searchedAttributes;
+        }
+
+        /// <summary>
+        /// Read file, currently just check if file does exist and given file path is valid.
+        /// </summary>
+>>>>>>> 53664b73ff1add066bbc4ea9635a54d6e1d7d0f9
         public void readFile()
         {
             Console.WriteLine("Please input file path:");
             filePath = Console.ReadLine();
-            fileName = filePath.Substring(filePath.LastIndexOf('\\')+1);
             try
             {
                 doc.Load(filePath);
             }
-            catch (System.IO.FileNotFoundException) { }
-            
-        }
-
-        //Display all nodes. Used just to test if file was read as it should.
-        public void displayXMLfile()
-        {
-            foreach (XmlNode node in doc.DocumentElement.ChildNodes)
-            {
-                string text = node.InnerText;
-                Console.WriteLine(text);
+            catch{
+                Environment.Exit(0);
             }
         }
 
-        //extracting data from xml
+        /// <summary>
+        /// Extract data from file using filePath and create output string to be printed in new file
+        /// </summary>
+        /// <returns>returns output string that contains only elements that are searched</returns>
         public String extractOutput()
         {
-            String output =""; //string that will be used to save values
-            XmlTextReader reader = new XmlTextReader(filePath);
+            StringBuilder output = new StringBuilder(); //string that will be used to save values
+            using (XmlTextReader reader = new XmlTextReader(filePath)) { 
+            int i = 1;
             while (reader.Read())
             {
-                switch (reader.NodeType)
-                {
-                    case XmlNodeType.Element: // The node is an element.
-                        if (reader.Name.Equals("row")) //when we get to new row, add \n so we can separate individual rows
+                if (i == 1 && reader.Name.Equals("row")) //when we get to new row, add \n so we can separate individual rows
                         {
-                            output = output + '\n';
+                            output.Append("\n");
+                            i = 0;
                         }
-                        if (reader.AttributeCount > 0)
+                else {if(reader.Name.Equals("row")) i++; }
+                //reading from element that has attributes
+                if (reader.AttributeCount > 0)
                         {
-                            
-                            if (!attributes.Contains(reader.GetAttribute(0)))  //adding attributes to the string. Attributes will be added only if they are not already put in
-                            {
-                                attributes = attributes + (reader.GetAttribute(0) + ',');  
+                            String atName = reader.GetAttribute("name").ToString(); //taking atribute name and continue working if it is not null
+                            if (atName != null) { 
+                            //checking if attribute is required for the file and imputing it once for the header.
+                                if (searchedAttributes.Contains(atName) && !header.Contains(atName))  
+                                {
+                                  header = header + (reader.GetAttribute("name") + ','); //Not using string builder because i need contains function
+                                
+                                }
+
+                            //reading attribute and "cleaning it" for output string.
+                             if(searchedAttributes.Contains(atName))
+                             {
+                                String forOutput = cleanString(reader.ReadElementContentAsString()); //cleaning string so it would fit csv format
+                                output.Append(forOutput + ","); 
+                             }
+
                             }
                         }
-                                               
-                        break;
-                    case XmlNodeType.Text: //Display the text in each element.
-                        output = output + reader.Value + ','; //reading the value
-                        break;
-                    case XmlNodeType.EndElement: //Display the end of the element.
-                        break;
-                }
-
             }
-            reader.Close();
-            return (attributes + output);
+            }
+            return (header + output);
             
         }
-        //create csv file at the same location as xml, but keep both files.
+
+        /// <summary>
+        /// Create file from previouse file destination with csv extension
+        /// </summary>
         public void fileCreate()
         {
-            String newFileDestination = filePath.Replace(".xml", ".csv");
-            StreamWriter file = new StreamWriter(newFileDestination);
-            file.WriteLine(extractOutput());
-            file.Close();
-        }
+            String newFileDestination = filePath.Substring(0,filePath.LastIndexOf('.')) + ".csv";
 
+            using (StreamWriter file = new StreamWriter(newFileDestination))
+            {
+                file.WriteLine(extractOutput());
+            }
+        }
+       
+        /// <summary>
+        /// Cleaning string so it would fit format of CSV file
+        /// </summary>
+        /// <param name="str">str is string that we want to clean</param>
+        /// <returns>return is that same string</returns>
+        public String cleanString(String str)
+        {
+            str = str.Replace(',','\0');
+            str = str.Replace('"', '\0');
+            str = str.Replace('\n', '\0');
+            str = str.Replace('\\', '\0');
+            return str;
+        }
     }
 }
