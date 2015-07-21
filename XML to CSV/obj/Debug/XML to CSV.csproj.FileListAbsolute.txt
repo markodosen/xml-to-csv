@@ -1,1 +1,0 @@
-C:\Users\Marko.Dosen\Documents\Visual Studio 2013\Projects\xml-to-csv\XML to CSV\bin\Debug\XML to CSV.exe.config

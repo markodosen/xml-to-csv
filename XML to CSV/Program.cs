@@ -8,9 +8,9 @@ namespace XML_to_CSV
 {
     class Program
     {
-        static void Main(String arg)
+        static void Main(String[] arg)
         {
-            if (arg.EndsWith(".xls")) { 
+             
             LinkedList<String> list = new LinkedList<string>();
             list.AddFirst("Subtotal");
             list.AddLast("Shipping");
@@ -19,7 +19,7 @@ namespace XML_to_CSV
             Converter c = new Converter(list);
             c.readFile();
             c.fileCreate();
-            }
+            
         }
     }
 }

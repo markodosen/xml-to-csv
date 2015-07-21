@@ -10,15 +10,10 @@ namespace XML_to_CSV
     {
 
         
-        private String filePath { get; set; }
-        private XmlDocument doc = new XmlDocument();
-<<<<<<< HEAD
-        private String attributes = "";
-
-        //read file from file path that is inserted through console. Also saves file name.
-=======
-        private String header="";
-        private LinkedList<String> searchedAttributes;
+        private String filePath { get; set; } //path from where file is loaded
+        private XmlDocument doc = new XmlDocument(); //file that will be loaded if path is correct
+        private String header=""; //header of new csv file
+        private LinkedList<String> searchedAttributes; //list of all attributes that user is searching for
         
 
         /// <summary>
@@ -33,7 +28,6 @@ namespace XML_to_CSV
         /// <summary>
         /// Read file, currently just check if file does exist and given file path is valid.
         /// </summary>
->>>>>>> 53664b73ff1add066bbc4ea9635a54d6e1d7d0f9
         public void readFile()
         {
             Console.WriteLine("Please input file path:");
@@ -67,7 +61,8 @@ namespace XML_to_CSV
                 //reading from element that has attributes
                 if (reader.AttributeCount > 0)
                         {
-                            String atName = reader.GetAttribute("name").ToString(); //taking atribute name and continue working if it is not null
+                            //taking atribute name and continue working if it is not null
+                            String atName = reader.GetAttribute("name").ToString(); 
                             if (atName != null) { 
                             //checking if attribute is required for the file and imputing it once for the header.
                                 if (searchedAttributes.Contains(atName) && !header.Contains(atName))  
@@ -108,7 +103,7 @@ namespace XML_to_CSV
         /// Cleaning string so it would fit format of CSV file
         /// </summary>
         /// <param name="str">str is string that we want to clean</param>
-        /// <returns>return is that same string</returns>
+        /// <returns>return is that same string but cleaned</returns>
         public String cleanString(String str)
         {
             str = str.Replace(',','\0');
