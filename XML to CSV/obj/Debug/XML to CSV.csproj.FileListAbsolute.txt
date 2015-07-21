@@ -1,6 +1,1 @@
-c:\users\marko.dosen\documents\visual studio 2013\Projects\XML to CSV\XML to CSV\bin\Debug\XML to CSV.exe.config
-c:\users\marko.dosen\documents\visual studio 2013\Projects\XML to CSV\XML to CSV\bin\Debug\XML to CSV.exe
-c:\users\marko.dosen\documents\visual studio 2013\Projects\XML to CSV\XML to CSV\bin\Debug\XML to CSV.pdb
-c:\users\marko.dosen\documents\visual studio 2013\Projects\XML to CSV\XML to CSV\obj\Debug\XML to CSV.csprojResolveAssemblyReference.cache
-c:\users\marko.dosen\documents\visual studio 2013\Projects\XML to CSV\XML to CSV\obj\Debug\XML to CSV.exe
-c:\users\marko.dosen\documents\visual studio 2013\Projects\XML to CSV\XML to CSV\obj\Debug\XML to CSV.pdb
+C:\Users\Marko.Dosen\Documents\Visual Studio 2013\Projects\xml-to-csv\XML to CSV\bin\Debug\XML to CSV.exe.config

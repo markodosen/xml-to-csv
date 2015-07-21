@@ -15,10 +15,6 @@ namespace XML_to_CSV
         private XmlDocument doc = new XmlDocument();
         private String attributes = "";
 
-        public Converter(){
-
-        }
-
         //read file from file path that is inserted through console. Also saves file name.
         public void readFile()
         {
