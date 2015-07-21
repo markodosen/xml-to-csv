@@ -10,7 +10,7 @@ namespace XML_to_CSV
     {
 
         //path from where file is loaded
-        private String filePath { get; set; }
+        public String filePath { get; set; }
         //file that will be loaded if path is correct
         private XmlDocument doc = new XmlDocument(); 
         //header of new csv file
@@ -33,13 +33,15 @@ namespace XML_to_CSV
         /// </summary>
         public void readFile()
         {
-            Console.WriteLine("Please input file path:");
-            filePath = Console.ReadLine();
+            //Console.WriteLine("Please input file path:");
+           // filePath = Console.ReadLine();
             try
             {
                 doc.Load(filePath);
             }
             catch{
+                Console.WriteLine("XML File not found, press any button to exit!");
+                Console.ReadKey();
                 Environment.Exit(0);
             }
         }
