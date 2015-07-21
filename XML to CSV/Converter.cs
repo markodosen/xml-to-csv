@@ -103,8 +103,8 @@ namespace XML_to_CSV
         /// </summary>
         public void fileCreate()
         {
-            String newFileDestination = filePath.Substring(0,filePath.LastIndexOf('.')) + ".csv";
-
+            String newFileDestination = filePath.Replace(Path.GetFileNameWithoutExtension(filePath), "[" +DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + "]" + Path.GetFileNameWithoutExtension(filePath));
+            newFileDestination = Path.ChangeExtension(newFileDestination, ".csv");
             using (StreamWriter file = new StreamWriter(newFileDestination))
             {
                 file.WriteLine(newOutput());
@@ -139,7 +139,9 @@ namespace XML_to_CSV
             }
         }
 
-        //create header of csv file from dictionary keys
+        /// <summary>
+        /// create header of csv file from dictionary keys
+        /// </summary>
         public void setHeader()
         {
             foreach (var s in values.Keys)
@@ -148,7 +150,9 @@ namespace XML_to_CSV
             }
         }
 
-        //takes all values from dictionary and add them to output string.
+        /// <summary>
+        /// takes all values from dictionary and add them to output string.
+        /// </summary>
         public void getAllValues()
         {
             foreach (String s in values.Values)
